@@ -49,11 +49,12 @@ async function runValtecEngineTest() {
 
   const voicesRes = await registeredTTS.getVoices()
   assert.ok(Array.isArray(voicesRes.voices), 'getVoices returned voices list')
-  assert.ok(voicesRes.voices.some(v => v.lang === 'vi-VN'), 'Vietnamese voice option included')
+  assert.equal(voicesRes.voices.length, 5, 'Returns 5 Valtec multi-speaker voices')
+  assert.ok(voicesRes.voices.every(v => v.lang === 'vi-VN'), 'All voices are Vietnamese')
 
   const speakRes = await registeredTTS.speak({
     text: 'Xin chào, đây là hệ thống đọc tự động tiếng Việt.',
-    voiceId: 'valtec-vi-1'
+    voiceId: '1'
   })
 
   assert.equal(speakRes.mimeType, 'audio/wav', 'mimeType is audio/wav')

@@ -27,22 +27,38 @@ export class ModelManager {
     if (this.config) return this.config
 
     try {
-      const storedConfig = await this.novel.storage?.get<TtsConfig>('valtec_models/tts_config.json')
-      if (storedConfig && typeof storedConfig === 'object' && 'sample_rate' in storedConfig && typeof storedConfig.sample_rate === 'number') {
-        this.config = storedConfig as TtsConfig
+      const storedConfig = await this.novel.storage?.get<any>('models/tts_config.json')
+      let parsed: TtsConfig | null = null
+
+      if (storedConfig) {
+        if (typeof storedConfig === 'object' && storedConfig !== null && 'sample_rate' in storedConfig) {
+          parsed = storedConfig as TtsConfig
+        } else if (typeof storedConfig === 'string') {
+          parsed = JSON.parse(storedConfig) as TtsConfig
+        } else if (storedConfig.buffer instanceof ArrayBuffer) {
+          const text = new TextDecoder().decode(storedConfig.buffer)
+          parsed = JSON.parse(text) as TtsConfig
+        } else if (typeof File !== 'undefined' && storedConfig instanceof File) {
+          const text = await storedConfig.text()
+          parsed = JSON.parse(text) as TtsConfig
+        }
+      }
+
+      if (parsed && typeof parsed.sample_rate === 'number') {
+        this.config = parsed
         return this.config
       }
 
       if (this.novel.network) {
         const remoteConfig = await this.novel.network.fetchJson<TtsConfig>(DEFAULT_DOWNLOAD_URLS['tts_config.json'])
         if (remoteConfig && typeof remoteConfig === 'object' && typeof remoteConfig.sample_rate === 'number') {
-          await this.novel.storage?.set('valtec_models/tts_config.json', remoteConfig)
+          await this.novel.storage?.set('models/tts_config.json', remoteConfig)
           this.config = remoteConfig
           return this.config
         }
       }
-    } catch {
-      // Use fallback config if storage/network fails or during tests
+    } catch (e) {
+      await this.novel.logger?.warn?.('[Valtec TTS] Failed to fetch config, using default config:', e)
     }
 
     this.config = DEFAULT_TTS_CONFIG
@@ -50,26 +66,29 @@ export class ModelManager {
   }
 
   async getModelBuffer(fileName: string): Promise<ArrayBuffer> {
-    const storageKey = `valtec_models/${fileName}`
+    const storageKey = `models/${fileName}`
     try {
-      const stored = await this.novel.storage?.get(storageKey)
+      const stored = await this.novel.storage?.get<any>(storageKey)
 
       if (stored) {
         if (stored instanceof ArrayBuffer) {
           return stored
         }
-        if (typeof stored === 'string') {
-          return this.base64ToArrayBuffer(stored.replace(/^data:[^;]+;base64,/, ''))
+        if (stored && typeof stored === 'object' && stored.buffer instanceof ArrayBuffer) {
+          return stored.buffer
         }
         if (typeof File !== 'undefined' && stored instanceof File) {
           return await stored.arrayBuffer()
+        }
+        if (typeof stored === 'string') {
+          return this.base64ToArrayBuffer(stored.replace(/^data:[^;]+;base64,/, ''))
         }
       }
 
       // Download via network if available
       const url = DEFAULT_DOWNLOAD_URLS[fileName]
       if (url && this.novel.network) {
-        await this.novel.logger?.info(`[Valtec TTS] Downloading model ${fileName}...`)
+        await this.novel.logger?.info?.(`[Valtec TTS] Downloading model ${fileName}...`)
         const dataUrl = await this.novel.network.fetchDataUrl(url)
         if (dataUrl && typeof dataUrl === 'string' && dataUrl.length > 0) {
           const base64 = dataUrl.replace(/^data:[^;]+;base64,/, '')
@@ -78,8 +97,8 @@ export class ModelManager {
           return buffer
         }
       }
-    } catch {
-      // Fallback for mock test environment
+    } catch (e) {
+      await this.novel.logger?.warn?.(`[Valtec TTS] Error retrieving model buffer for ${fileName}:`, e)
     }
 
     return new ArrayBuffer(8)

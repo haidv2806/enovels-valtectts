@@ -2,9 +2,14 @@ import { ProcessBridge } from './processMode/bridge'
 import { CloudBridge } from './cloudMode/bridge'
 import { WasmBridge } from './wasmMode/bridge'
 
+declare const __NOVEL_TTS_MODE__: string | undefined
+
 export async function activateTTS(novel: NovelExtensionApi): Promise<void> {
   if (!novel.tts) return
-  const mode = novel.extension?.manifest?.contributes?.tts?.mode || 'process'
+  const mode =
+    (typeof __NOVEL_TTS_MODE__ !== 'undefined' ? __NOVEL_TTS_MODE__ : undefined) ||
+    novel.extension?.manifest?.contributes?.tts?.mode ||
+    'wasm'
 
   if (mode === 'process') {
     const bridge = new ProcessBridge(novel)

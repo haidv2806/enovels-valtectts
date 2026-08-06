@@ -19,7 +19,8 @@ async function bundle(outfile, platform) {
     legalComments: 'none',
     minify: false,
     define: {
-      __NOVEL_EXTENSION_KIND__: JSON.stringify(extensionKind)
+      __NOVEL_EXTENSION_KIND__: JSON.stringify(extensionKind),
+      __NOVEL_TTS_MODE__: JSON.stringify(manifest.contributes?.tts?.mode || 'wasm')
     }
   }
 

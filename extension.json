@@ -46,6 +46,38 @@
         "getVoices",
         "speak",
         "stop"
+      ],
+      "resources": [
+        {
+          "url": "https://raw.githubusercontent.com/haidv2806/valtec-tts/main/model/tts_config.json",
+          "path": "models/tts_config.json",
+          "size": 10233,
+          "sha256": "2971a897fafbdc0aeb1fb8c4bbb95d93d892d392523e067d65624118ef6e659b"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/haidv2806/valtec-tts/main/model/text_encoder.onnx",
+          "path": "models/text_encoder.onnx",
+          "size": 28083469,
+          "sha256": "d5485251d2c5ab35cf668a3bba1301f658a9d392ab8a1c849d24c869a3c29979"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/haidv2806/valtec-tts/main/model/duration_predictor.onnx",
+          "path": "models/duration_predictor.onnx",
+          "size": 2174994,
+          "sha256": "6f8a237b21f7e62f0b559022f5097617855b579e57977618f0169cc80dba444d"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/haidv2806/valtec-tts/main/model/flow.onnx",
+          "path": "models/flow.onnx",
+          "size": 82786604,
+          "sha256": "fcfbe0b7ead1ecf59911d01a0227e9122ecac2a543753b85beab3fbe7af1eec3"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/haidv2806/valtec-tts/main/model/decoder.onnx",
+          "path": "models/decoder.onnx",
+          "size": 59709069,
+          "sha256": "2b24b15f3527c62b2a5c668a5a5a25573bb958df14ef6a00c9ba2dce65346a9f"
+        }
       ]
     }
   }
