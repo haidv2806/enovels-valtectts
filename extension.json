@@ -1,11 +1,11 @@
 {
-  "name": "example-extension",
-  "displayName": "Example Extension",
-  "publisher": "your-publisher",
+  "name": "valtec-tts",
+  "displayName": "Valtec TTS Provider",
+  "publisher": "haidv",
   "version": "0.1.0",
-  "description": "A fixture-backed template for e-novels scraper or theme extensions.",
+  "description": "Offline Vietnamese neural Text-to-Speech extension using Valtec VITS ONNX model.",
   "starter": {
-    "kind": "scraper"
+    "kind": "tts"
   },
   "engines": {
     "enovel": ">=1.0.0"
@@ -17,48 +17,36 @@
     "always"
   ],
   "categories": [
-    "Scrapers"
+    "TTS"
   ],
   "keywords": [
     "e-novels",
-    "scraper",
-    "theme",
-    "template",
-    "typescript"
+    "tts",
+    "valtec",
+    "vietnamese",
+    "onnx"
   ],
   "permissions": [
-    "network",
-    "reader"
+    "tts",
+    "storage",
+    "network"
   ],
   "network": {
     "allowedHosts": [
-      "example.com"
+      "raw.githubusercontent.com"
     ]
   },
   "contributes": {
-    "scraper": {
-      "name": "Example Site",
-      "description": "Replace the placeholder routes and mappers with a source you are allowed to access.",
-      "version": 2,
-      "site": {
-        "name": "Example Site",
-        "baseUrl": "https://example.com"
-      },
+    "tts": {
+      "name": "Valtec Vietnamese TTS",
+      "description": "Offline Vietnamese neural Text-to-Speech extension using Valtec VITS ONNX model.",
+      "version": 1,
+      "mode": "wasm",
       "capabilities": [
-        "search",
-        "getBookDetail",
-        "getChapter"
-      ],
-      "search": {
-        "pageSize": 20,
-        "fields": [
-          {
-            "id": "query",
-            "type": "text",
-            "label": "Search"
-          }
-        ]
-      }
+        "getVoices",
+        "speak",
+        "stop"
+      ]
     }
   }
 }

@@ -86,7 +86,7 @@ interface NovelExtensionApi {
   readonly network?: ExtensionNetworkApi
   readonly storage?: ExtensionStorageApi
   readonly ui?: {
-    applyTheme(variables: Partial<Record<ThemeVariableName, string>>): Promise<void>
+    applyTheme(variables: Record<string, string>): Promise<void>
   }
 }
 
